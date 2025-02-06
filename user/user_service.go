@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 
-	pb "github.com/ebrickdev/ebrick/example/user/proto"
 	"github.com/ebrickdev/ebrick/logger"
+	pb "github.com/ebrickdev/example/user/proto"
 )
 
 type UserServiceServer struct {

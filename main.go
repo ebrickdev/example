@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/ebrickdev/ebrick"
-	"github.com/ebrickdev/ebrick/example/user"
+	"github.com/ebrickdev/example/user"
 )
 
 func main() {

@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 
-	pb "github.com/ebrickdev/ebrick/example/user/proto"
 	"github.com/ebrickdev/ebrick/logger"
 	"github.com/ebrickdev/ebrick/module"
 	egrpc "github.com/ebrickdev/ebrick/transport/grpc"
 	"github.com/ebrickdev/ebrick/transport/httpserver"
+	pb "github.com/ebrickdev/example/user/proto"
 	"google.golang.org/grpc"
 )
 
