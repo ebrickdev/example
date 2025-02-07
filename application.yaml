@@ -7,6 +7,6 @@ grpc:
 database:
     host: localhost
     port: 5432
-    dbname: linkify
-    user: linkify
-    password: linkify
+    dbname: example
+    user: example
+    password: example
