@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  redis:
+    image: "redis/redis-stack"
+    container_name: "redis-stack"
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+  db:
+    image: "postgres:latest"
+    container_name: "db"
+    environment:
+      POSTGRES_USER: linkify
+      POSTGRES_PASSWORD: linkify
+      POSTGRES_DB: linkify
+    ports:
+      - "5432:5432"

@@ -2,8 +2,10 @@ package user
 
 import (
 	"context"
+	"time"
 
 	"github.com/ebrickdev/ebrick/logger"
+	"github.com/ebrickdev/ebrick/messaging"
 	"github.com/ebrickdev/ebrick/module"
 	egrpc "github.com/ebrickdev/ebrick/transport/grpc"
 	"github.com/ebrickdev/ebrick/transport/httpserver"
@@ -12,7 +14,8 @@ import (
 )
 
 type User struct {
-	log logger.Logger
+	log      logger.Logger
+	eventbus messaging.EventBus
 }
 
 // Dependencies implements module.Module.
@@ -34,6 +37,7 @@ func (c *User) Id() string {
 func (c *User) Initialize(ctx context.Context, options *module.Options) error {
 	// Perform initialization tasks here
 	c.log = options.Logger
+	c.eventbus = options.EventBus
 	return nil
 }
 
@@ -44,8 +48,32 @@ func (c *User) Name() string {
 
 // Start implements module.Module.
 func (c *User) Start(ctx context.Context) error {
+
+	// Subscribe to an event
+	c.log.Info("Subscribing to user.started event")
+	if err := c.eventbus.Subscribe("user.started", func(ctx context.Context, event messaging.Event) {
+		c.log.Info("Received user.started event", logger.Any("event", event))
+	}); err != nil {
+		c.log.Error("Failed to subscribe to user.started event", logger.Error(err))
+	}
+
+	// Publish an event
+	c.log.Info("Publishing user.started event")
+	if err := c.eventbus.Publish(context.Background(), messaging.Event{
+		ID:          "12",
+		Source:      "user",
+		SpecVersion: "1.0",
+		Type:        "user.started",
+		Data: map[string]any{
+			"message": "User module started",
+		},
+		Time: time.Time{},
+	}); err != nil {
+		c.log.Error("Failed to publish user.started event", logger.Error(err))
+	}
 	// Perform start tasks here
 	return nil
+
 }
 
 // Stop implements module.Module.

@@ -3,3 +3,10 @@ server:
   port: 8080
 grpc:
   enabled: true
+
+database:
+    host: localhost
+    port: 5432
+    dbname: linkify
+    user: linkify
+    password: linkify
