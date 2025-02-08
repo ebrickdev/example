@@ -4,9 +4,9 @@ go 1.22.5
 
 require (
 	github.com/ebrickdev/ebrick v0.9.3
-	github.com/ebrickdev/extensions/v1/db/postgresql v0.0.0-20250207083921-b820daa6e716
-	github.com/ebrickdev/extensions/v1/logger/zap v0.0.0-20250207073658-028a79e5395a
-	github.com/ebrickdev/extensions/v1/messaging/redis-stream v0.0.0-20250207073658-028a79e5395a
+	github.com/ebrickdev/extensions/v1/db/postgresql v0.0.0-20250208063106-fdd828203c1f
+	github.com/ebrickdev/extensions/v1/logger/zap v0.0.0-20250207083921-b820daa6e716
+	github.com/ebrickdev/extensions/v1/messaging/redis-stream v0.0.0-20250207083921-b820daa6e716
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 
