@@ -11,8 +11,11 @@ database:
     user: example
     password: example
 security:
-  jwt:
-    signing_key: default-secret-key
-    access_token_expiration: 15m
-    refresh_token_expiration: 168h
-    enable_token_endpoint: true
+  oidc:
+    issuer_url: https://<example>
+    client_id: <client_id>
+    client_secret: <client_id>
+    scopes:
+      - openid
+      - profile
+      - email
