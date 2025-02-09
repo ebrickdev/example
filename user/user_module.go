@@ -4,23 +4,22 @@ import (
 	"context"
 	"time"
 
+	"github.com/ebrickdev/ebrick"
 	"github.com/ebrickdev/ebrick/logger"
 	"github.com/ebrickdev/ebrick/messaging"
 	"github.com/ebrickdev/ebrick/module"
-	egrpc "github.com/ebrickdev/ebrick/transport/grpc"
+	"github.com/ebrickdev/ebrick/security/auth"
 	"github.com/ebrickdev/ebrick/transport/httpserver"
 	pb "github.com/ebrickdev/example/user/proto"
 	"google.golang.org/grpc"
 )
 
 type User struct {
-	log      logger.Logger
-	eventbus messaging.EventBus
 }
 
 // Dependencies implements module.Module.
 func (c *User) Dependencies() []string {
-	return []string{"dependency1", "dependency2"}
+	return []string{"dependency1"}
 }
 
 // Description implements module.Module.
@@ -35,9 +34,8 @@ func (c *User) Id() string {
 
 // Initialize implements module.Module.
 func (c *User) Initialize(ctx context.Context, options *module.Options) error {
-	// Perform initialization tasks here
-	c.log = options.Logger
-	c.eventbus = options.EventBus
+	c.registerApiRoutes()
+	c.registerGRPCServices()
 	return nil
 }
 
@@ -50,16 +48,16 @@ func (c *User) Name() string {
 func (c *User) Start(ctx context.Context) error {
 
 	// Subscribe to an event
-	c.log.Info("Subscribing to user.started event")
-	if err := c.eventbus.Subscribe("user.started", func(ctx context.Context, event messaging.Event) {
-		c.log.Info("Received user.started event", logger.Any("event", event))
+	ebrick.Logger.Info("Subscribing to user.started event")
+	if err := ebrick.EventBus.Subscribe("user.started", func(ctx context.Context, event messaging.Event) {
+		ebrick.Logger.Info("Received user.started event", logger.Any("event", event))
 	}); err != nil {
-		c.log.Error("Failed to subscribe to user.started event", logger.Error(err))
+		ebrick.Logger.Error("Failed to subscribe to user.started event", logger.Error(err))
 	}
 
 	// Publish an event
-	c.log.Info("Publishing user.started event")
-	if err := c.eventbus.Publish(context.Background(), messaging.Event{
+	ebrick.Logger.Info("Publishing user.started event")
+	if err := ebrick.EventBus.Publish(context.Background(), messaging.Event{
 		ID:          "12",
 		Source:      "user",
 		SpecVersion: "1.0",
@@ -69,7 +67,7 @@ func (c *User) Start(ctx context.Context) error {
 		},
 		Time: time.Time{},
 	}); err != nil {
-		c.log.Error("Failed to publish user.started event", logger.Error(err))
+		ebrick.Logger.Error("Failed to publish user.started event", logger.Error(err))
 	}
 	// Perform start tasks here
 	return nil
@@ -87,19 +85,24 @@ func (c *User) Version() string {
 	return "v1.0.0"
 }
 
-func (c *User) RegisterRoutes(router httpserver.RouterGroup) {
-	router.GET("/customers", func(ctx httpserver.Context) {
-		ctx.JSON(200, "GET /customers")
-	})
+func (c *User) registerApiRoutes() {
+	auMiddle := auth.NewAuthMiddleware(ebrick.AuthManager, ebrick.Logger)
+	router := ebrick.HTTPServer.Group("protected")
+	{
+		router.Use(auMiddle.TokenAuth())
+		router.GET("/customers", func(ctx httpserver.Context) {
+			ctx.JSON(200, "GET /customers")
+		})
 
-	router.POST("/customers", func(ctx httpserver.Context) {
-		ctx.JSON(200, "POST /customers")
-	})
+		router.POST("/customers", func(ctx httpserver.Context) {
+			ctx.JSON(200, "POST /customers")
+		})
+	}
 }
 
-func (c *User) RegisterGRPCServices(s egrpc.GRPCServer) {
+func (c *User) registerGRPCServices() {
 	// Register gRPC services here
-	s.RegisterService(func(s *grpc.Server) {
-		pb.RegisterUserServer(s, NewUserServiceServer(c.log))
+	ebrick.GRPCServer.RegisterService(func(s *grpc.Server) {
+		pb.RegisterUserServer(s, NewUserServiceServer(ebrick.Logger))
 	})
 }

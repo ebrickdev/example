@@ -10,3 +10,9 @@ database:
     dbname: example
     user: example
     password: example
+security:
+  jwt:
+    signing_key: default-secret-key
+    access_token_expiration: 15m
+    refresh_token_expiration: 168h
+    enable_token_endpoint: true
