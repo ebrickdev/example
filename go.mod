@@ -3,11 +3,10 @@ module github.com/ebrickdev/example
 go 1.22.5
 
 require (
-	github.com/ebrickdev/ebrick v0.10.0
+	github.com/ebrickdev/ebrick v0.11.0
 	github.com/ebrickdev/extensions/v1/db/postgresql v0.0.0-20250208063106-fdd828203c1f
 	github.com/ebrickdev/extensions/v1/logger/zap v0.0.0-20250207083921-b820daa6e716
 	github.com/ebrickdev/extensions/v1/messaging/redis-stream v0.0.0-20250207083921-b820daa6e716
-	github.com/ebrickdev/extensions/v1/security/auth/jwt v0.0.0-20250209155319-c9b8150cfc6f
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 
@@ -28,7 +27,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
