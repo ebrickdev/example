@@ -9,7 +9,7 @@ import (
 	"github.com/ebrickdev/ebrick/messaging"
 	"github.com/ebrickdev/ebrick/module"
 	"github.com/ebrickdev/ebrick/security/auth"
-	"github.com/ebrickdev/ebrick/transport/httpserver"
+	"github.com/ebrickdev/ebrick/transport/http"
 	pb "github.com/ebrickdev/example/user/proto"
 	"google.golang.org/grpc"
 )
@@ -87,14 +87,14 @@ func (c *User) Version() string {
 
 func (c *User) registerApiRoutes() {
 	auMiddle := auth.NewAuthMiddleware(ebrick.AuthManager, ebrick.Logger)
-	router := ebrick.HTTPServer.Group("protected")
+	router := ebrick.HTTPServer.Engine().Group("protected")
 	{
 		router.Use(auMiddle.TokenAuth())
-		router.GET("/customers", func(ctx httpserver.Context) {
+		router.GET("/customers", func(ctx *http.Context) {
 			ctx.JSON(200, "GET /customers")
 		})
 
-		router.POST("/customers", func(ctx httpserver.Context) {
+		router.POST("/customers", func(ctx *http.Context) {
 			ctx.JSON(200, "POST /customers")
 		})
 	}
