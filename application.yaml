@@ -19,3 +19,6 @@ security:
       - openid
       - profile
       - email
+messaging:
+    redis:
+        url: localhost:6379
