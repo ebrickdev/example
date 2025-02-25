@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
+	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/ebrickdev/ebrick"
 	"github.com/ebrickdev/ebrick/logger"
-	"github.com/ebrickdev/ebrick/messaging"
 	"github.com/ebrickdev/ebrick/module"
 	"github.com/ebrickdev/ebrick/security/auth"
 	"github.com/ebrickdev/ebrick/transport/http"
@@ -35,7 +35,7 @@ func (c *User) Id() string {
 // Initialize implements module.Module.
 func (c *User) Initialize(ctx context.Context, options *module.Options) error {
 	c.registerApiRoutes()
-	c.registerGRPCServices()
+	// c.registerGRPCServices()
 	return nil
 }
 
@@ -49,7 +49,7 @@ func (c *User) Start(ctx context.Context) error {
 
 	// Subscribe to an event
 	ebrick.Logger.Info("Subscribing to user.started event")
-	if err := ebrick.EventBus.Subscribe("user.started", func(ctx context.Context, event messaging.Event) {
+	if err := ebrick.EventBus.Subscribe("user.started", func(ctx context.Context, event cloudevents.Event) {
 		ebrick.Logger.Info("Received user.started event", logger.Any("event", event))
 	}); err != nil {
 		ebrick.Logger.Error("Failed to subscribe to user.started event", logger.Error(err))
@@ -57,17 +57,19 @@ func (c *User) Start(ctx context.Context) error {
 
 	// Publish an event
 	ebrick.Logger.Info("Publishing user.started event")
-	if err := ebrick.EventBus.Publish(context.Background(), messaging.Event{
-		ID:          "12",
-		Source:      "user",
-		SpecVersion: "1.0",
-		Type:        "user.started",
-		Data: map[string]any{
-			"message": "User module started",
-		},
-		Time: time.Time{},
-	}); err != nil {
-		ebrick.Logger.Error("Failed to publish user.started event", logger.Error(err))
+
+	event := cloudevents.NewEvent()
+	event.SetID("12")
+	event.SetSource("user")
+	event.SetType("user.started")
+	event.SetSpecVersion("1.0")
+	event.SetTime(time.Now())
+	event.SetData(cloudevents.ApplicationJSON, map[string]any{
+		"message": "User module started",
+	})
+
+	if result := ebrick.EventBus.Publish(context.Background(), "user.started", event); cloudevents.IsUndelivered(result) {
+		ebrick.Logger.Error("Failed to publish user.started event", logger.Error(result))
 	}
 	// Perform start tasks here
 	return nil

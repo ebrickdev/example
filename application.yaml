@@ -1,20 +1,26 @@
 env: development
 server:
-  port: 8080
+  port: 8081
+
 grpc:
-  enabled: true
+  address: ":50051"
 
 database:
     host: localhost
     port: 5432
-    dbname: example
-    user: example
-    password: example
+    user: linkify
+    password: linkify
+    dbname: linkify
+    sslmode: disable
+cache:
+    redis:
+        host: localhost
+        port: 6379
 security:
   oidc:
-    issuer_url: https://<example>
-    client_id: <client_id>
-    client_secret: <client_id>
+    issuer_url: https://np-iam.linkifysoft.com/realms/linkifysoft-dev
+    client_id: admin-console
+    client_secret: XT87P8Tx3GWvJBUAiLQXyBDo8aqx2GXe
     scopes:
       - openid
       - profile
@@ -22,3 +28,4 @@ security:
 messaging:
     redis:
         url: localhost:6379
+        max_retries: 5
